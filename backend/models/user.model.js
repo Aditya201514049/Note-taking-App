@@ -50,7 +50,6 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 };
 
 // Indexes
-userSchema.index({ email: 1 }); // For unique check and auth lookups
 userSchema.index({ role: 1 }); // For admin listing users
 userSchema.index({ interests: 1 }); // For aggregation by interests
 

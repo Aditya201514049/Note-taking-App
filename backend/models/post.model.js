@@ -24,6 +24,5 @@ const postSchema = new mongoose.Schema(
 
 // Indexes
 postSchema.index({ userId: 1 }); // For $lookup aggregation to get posts by user
-postSchema.index({ _id: 1 }); // For fetching specific post by ID
 
 module.exports = mongoose.model("Post", postSchema);
