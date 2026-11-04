@@ -9,10 +9,10 @@ import Posts from "./pages/Posts";
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return (
-    <div style={{ 
-      display: "flex", 
-      justifyContent: "center", 
-      alignItems: "center", 
+    <div style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
       minHeight: "100vh",
       color: "#667eea",
       fontSize: "18px"
@@ -27,10 +27,10 @@ const ProtectedRoute = ({ children }) => {
 const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return (
-    <div style={{ 
-      display: "flex", 
-      justifyContent: "center", 
-      alignItems: "center", 
+    <div style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
       minHeight: "100vh",
       color: "#667eea",
       fontSize: "18px"
@@ -42,12 +42,30 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+const RootRoute = () => {
+  const { user, loading } = useAuth();
+  if (loading) return (
+    <div style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "100vh",
+      color: "#667eea",
+      fontSize: "18px"
+    }}>
+      Loading...
+    </div>
+  );
+  if (user) return <Navigate to="/dashboard" />;
+  return <Navigate to="/login" />;
+};
+
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/" element={<RootRoute />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
