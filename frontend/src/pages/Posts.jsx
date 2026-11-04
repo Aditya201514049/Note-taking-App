@@ -39,7 +39,7 @@ const Posts = () => {
   return (
     <div style={{ padding: "40px 20px", maxWidth: "900px", margin: "0 auto" }}>
       <div className="navbar">
-        <h1>Posts</h1>
+        <h1 style={{ color: "#1a1a2e" }}>Posts</h1>
         <button className="btn-secondary" onClick={() => navigate("/dashboard")}>
           Back to Dashboard
         </button>
@@ -54,7 +54,7 @@ const Posts = () => {
 
       {showForm && (
         <div className="card" style={{ marginTop: "20px" }}>
-          <h3 style={{ marginBottom: "20px", color: "#667eea" }}>Create Post</h3>
+          <h3 style={{ marginBottom: "20px", color: "#1a1a2e" }}>Create Post</h3>
           <form onSubmit={handleCreate}>
             <div className="form-group">
               <label>Title:</label>
@@ -88,7 +88,7 @@ const Posts = () => {
       )}
 
       <div style={{ marginTop: "30px" }}>
-        <h3 style={{ marginBottom: "20px", color: "#667eea" }}>All Posts</h3>
+        <h3 style={{ marginBottom: "20px", color: "#1a1a2e" }}>All Posts</h3>
         {posts.length === 0 ? (
           <div className="empty-state">
             <p>No posts yet. Create your first post!</p>

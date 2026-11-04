@@ -73,7 +73,7 @@ const Dashboard = () => {
   return (
     <div style={{ padding: "40px 20px", maxWidth: "900px", margin: "0 auto" }}>
       <div className="navbar">
-        <h1>My Notes</h1>
+        <h1 style={{ color: "#1a1a2e" }}>My Notes</h1>
         <div className="user-info">
           <span>Welcome, {user?.username}</span>
           <span className={`user-badge ${user?.role}`}>{user?.role}</span>
@@ -100,7 +100,7 @@ const Dashboard = () => {
 
       {(showForm || editingNote) && (
         <div className="card" style={{ marginTop: "20px" }}>
-          <h3 style={{ marginBottom: "20px", color: "#667eea" }}>
+          <h3 style={{ marginBottom: "20px", color: "#1a1a2e" }}>
             {editingNote ? "Edit Note" : "Create Note"}
           </h3>
           <form onSubmit={editingNote ? handleUpdate : handleCreate}>
@@ -149,7 +149,7 @@ const Dashboard = () => {
       )}
 
       <div style={{ marginTop: "30px" }}>
-        <h3 style={{ marginBottom: "20px", color: "#667eea" }}>My Notes</h3>
+        <h3 style={{ marginBottom: "20px", color: "#1a1a2e" }}>My Notes</h3>
         {notes.length === 0 ? (
           <div className="empty-state">
             <p>No notes yet. Create your first note!</p>

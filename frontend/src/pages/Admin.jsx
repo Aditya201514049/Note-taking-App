@@ -74,7 +74,7 @@ const Admin = () => {
   return (
     <div style={{ padding: "40px 20px", maxWidth: "1000px", margin: "0 auto" }}>
       <div className="navbar">
-        <h1>Admin Panel</h1>
+        <h1 style={{ color: "#1a1a2e" }}>Admin Panel</h1>
         <button className="btn-secondary" onClick={() => navigate("/dashboard")}>
           Back to Dashboard
         </button>
@@ -103,7 +103,7 @@ const Admin = () => {
 
       {activeTab === "users" && (
         <div>
-          <h3 style={{ marginBottom: "20px", color: "#667eea" }}>All Users</h3>
+          <h3 style={{ marginBottom: "20px", color: "#1a1a2e" }}>All Users</h3>
           {users.length === 0 ? (
             <div className="empty-state">
               <p>No users found</p>
@@ -153,7 +153,7 @@ const Admin = () => {
 
       {activeTab === "notes" && (
         <div>
-          <h3 style={{ marginBottom: "20px", color: "#667eea" }}>All Notes (All Users)</h3>
+          <h3 style={{ marginBottom: "20px", color: "#1a1a2e" }}>All Notes (All Users)</h3>
           {allNotes.length === 0 ? (
             <div className="empty-state">
               <p>No notes found</p>
@@ -175,7 +175,7 @@ const Admin = () => {
 
       {activeTab === "interests" && (
         <div>
-          <h3 style={{ marginBottom: "20px", color: "#667eea" }}>
+          <h3 style={{ marginBottom: "20px", color: "#1a1a2e" }}>
             Users Grouped by Interests (Aggregation)
           </h3>
           {interestsGroup.length === 0 ? (
