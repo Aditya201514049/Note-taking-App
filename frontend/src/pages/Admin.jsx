@@ -180,7 +180,7 @@ const Admin = () => {
           </h3>
           {interestsGroup.length === 0 ? (
             <div className="empty-state">
-              <p>No interests data found</p>
+              <p>No interests data found. Users need to add interests first!</p>
             </div>
           ) : (
             interestsGroup.map((group) => (

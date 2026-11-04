@@ -8,18 +8,27 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(false);
 
+  // Load user from localStorage on mount
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
   const login = async (email, password) => {
     const response = await axios.post("http://localhost:5000/api/auth/login", {
       email,
       password,
     });
     localStorage.setItem("token", response.data.token);
+    localStorage.setItem("user", JSON.stringify(response.data.user));
     setToken(response.data.token);
     setUser(response.data.user);
     return response.data;
   };
 
-  const register = async (username, email, password, role) => {
+  const register = async (username, email, password, role, interests = []) => {
     const response = await axios.post(
       "http://localhost:5000/api/auth/register",
       {
@@ -27,9 +36,11 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
         role,
+        interests,
       }
     );
     localStorage.setItem("token", response.data.token);
+    localStorage.setItem("user", JSON.stringify(response.data.user));
     setToken(response.data.token);
     setUser(response.data.user);
     return response.data;
@@ -37,6 +48,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setToken(null);
     setUser(null);
   };

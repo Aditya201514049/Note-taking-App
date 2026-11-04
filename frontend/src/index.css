@@ -327,3 +327,36 @@ table tbody tr:hover {
   margin-bottom: 16px;
   opacity: 0.5;
 }
+
+.interest-checkbox {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 12px;
+  margin-bottom: 12px;
+  padding: 10px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.interest-checkbox:hover {
+  border-color: #667eea;
+  background: #f8f8ff;
+}
+
+.interest-checkbox.selected {
+  border-color: #667eea;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+}
+
+.interest-checkbox input {
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.interest-checkbox span {
+  text-transform: capitalize;
+  font-weight: 500;
+}

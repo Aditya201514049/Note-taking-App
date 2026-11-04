@@ -4,7 +4,7 @@ const User = require("../models/user.model");
 // Register
 const register = async (req, res) => {
   try {
-    const { username, email, password, role } = req.body;
+    const { username, email, password, role, interests } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -19,6 +19,7 @@ const register = async (req, res) => {
       email,
       password,
       role: role || "user",
+      interests: interests || [],
     });
 
     const token = jwt.sign(
@@ -36,6 +37,7 @@ const register = async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
+        interests: user.interests,
       },
     });
   } catch (error) {
@@ -82,6 +84,7 @@ const login = async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
+        interests: user.interests,
       },
     });
   } catch (error) {

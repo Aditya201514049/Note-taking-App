@@ -8,10 +8,14 @@ const {
   updateUser,
   deleteUser,
   getUsersByInterests,
+  updateOwnProfile,
 } = require("../controllers/user.controller");
 
 // All user routes require authentication
 router.use(protect);
+
+// User can update their own profile
+router.put("/profile", updateOwnProfile);
 
 // Admin only routes
 router.get("/", authorize("admin"), getAllUsers);

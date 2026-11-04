@@ -123,6 +123,46 @@ const deleteUser = async (req, res) => {
   }
 };
 
+// Update own profile (user can update their own interests)
+const updateOwnProfile = async (req, res) => {
+  try {
+    const { interests } = req.body;
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (interests !== undefined) {
+      user.interests = interests;
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        interests: user.interests,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // AGGREGATION TASK 1: Group users by interests
 // Uses exactly one collection.aggregate() call
 const getUsersByInterests = async (req, res) => {
@@ -167,4 +207,5 @@ module.exports = {
   updateUser,
   deleteUser,
   getUsersByInterests,
+  updateOwnProfile,
 };

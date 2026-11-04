@@ -11,6 +11,9 @@ const Dashboard = () => {
   const [formData, setFormData] = useState({ title: "", content: "" });
   const [editingNote, setEditingNote] = useState(null);
   const [page, setPage] = useState(1);
+  const [showInterests, setShowInterests] = useState(false);
+  const [selectedInterests, setSelectedInterests] = useState([]);
+  const PREDEFINED_INTERESTS = ["chess", "reading", "gaming"];
 
   const fetchNotes = async () => {
     try {
@@ -23,7 +26,10 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchNotes();
-  }, [page]);
+    if (user?.interests) {
+      setSelectedInterests(user.interests);
+    }
+  }, [page, user]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -70,6 +76,26 @@ const Dashboard = () => {
     navigate("/login");
   };
 
+  const handleSaveInterests = async () => {
+    try {
+      const response = await api.put("/users/profile", { interests: selectedInterests });
+      alert("Interests saved successfully!");
+      setUser(response.data.user);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      setShowInterests(false);
+    } catch (err) {
+      alert("Failed to save interests");
+    }
+  };
+
+  const toggleInterest = (interest) => {
+    if (selectedInterests.includes(interest)) {
+      setSelectedInterests(selectedInterests.filter((i) => i !== interest));
+    } else {
+      setSelectedInterests([...selectedInterests, interest]);
+    }
+  };
+
   return (
     <div style={{ padding: "40px 20px", maxWidth: "900px", margin: "0 auto" }}>
       <div className="navbar">
@@ -94,8 +120,16 @@ const Dashboard = () => {
       <button
         onClick={() => setShowForm(!showForm)}
         className={showForm ? "btn-secondary" : "btn-success"}
+        style={{ marginRight: "10px" }}
       >
         {showForm ? "Cancel" : "Create Note"}
+      </button>
+
+      <button
+        onClick={() => setShowInterests(!showInterests)}
+        className={showInterests ? "btn-secondary" : "btn-primary"}
+      >
+        {showInterests ? "Cancel" : "Edit My Interests"}
       </button>
 
       {(showForm || editingNote) && (
@@ -145,6 +179,42 @@ const Dashboard = () => {
               </button>
             )}
           </form>
+        </div>
+      )}
+
+      {showInterests && (
+        <div className="card" style={{ marginTop: "20px" }}>
+          <h3 style={{ marginBottom: "20px", color: "#1a1a2e" }}>
+            My Interests
+          </h3>
+          <p style={{ marginBottom: "15px", color: "#666" }}>
+            Select your interests from the list below:
+          </p>
+          <div style={{ marginBottom: "20px" }}>
+            {PREDEFINED_INTERESTS.map((interest) => (
+              <label
+                key={interest}
+                className={`interest-checkbox ${selectedInterests.includes(interest) ? "selected" : ""}`}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedInterests.includes(interest)}
+                  onChange={() => toggleInterest(interest)}
+                />
+                <span>{interest}</span>
+              </label>
+            ))}
+          </div>
+          <button className="btn-primary" onClick={handleSaveInterests}>
+            Save Interests
+          </button>
+          <button
+            className="btn-secondary"
+            onClick={() => setShowInterests(false)}
+            style={{ marginLeft: "10px" }}
+          >
+            Cancel
+          </button>
         </div>
       )}
 
