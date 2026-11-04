@@ -11,7 +11,6 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
       lowercase: true,
       trim: true,
     },
@@ -48,8 +47,7 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// Indexes
-userSchema.index({ role: 1 }); // For admin listing users
-userSchema.index({ interests: 1 }); // For aggregation by interests
+userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model("User", userSchema);

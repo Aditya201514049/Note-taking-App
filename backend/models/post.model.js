@@ -23,6 +23,7 @@ const postSchema = new mongoose.Schema(
 );
 
 // Indexes
-postSchema.index({ userId: 1 }); // For $lookup aggregation to get posts by user
+postSchema.index({ userId: 1, createdAt: -1 }); // For paginated user-post lookup
+postSchema.index({ createdAt: -1 }); // For listing all posts with pagination
 
 module.exports = mongoose.model("Post", postSchema);

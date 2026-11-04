@@ -7,10 +7,7 @@ const {
   getPostsByUser,
 } = require("../controllers/post.controller");
 
-// All post routes require authentication
-router.use(protect);
-
-router.post("/", createPost);
+router.post("/", protect, createPost);
 router.get("/", getAllPosts);
 router.get("/user/:userId", getPostsByUser);
 

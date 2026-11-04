@@ -24,5 +24,6 @@ const noteSchema = new mongoose.Schema(
 
 // Indexes
 noteSchema.index({ userId: 1, createdAt: -1 }); // For user listing their notes with pagination
+noteSchema.index({ createdAt: -1 }); // For admin listing all notes with pagination
 
 module.exports = mongoose.model("Note", noteSchema);

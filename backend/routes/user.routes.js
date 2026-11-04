@@ -4,6 +4,7 @@ const protect = require("../middleware/auth.middleware");
 const authorize = require("../middleware/role.middelware");
 const {
   getAllUsers,
+  createUser,
   getUserById,
   updateUser,
   deleteUser,
@@ -19,6 +20,7 @@ router.put("/profile", updateOwnProfile);
 
 // Admin only routes
 router.get("/", authorize("admin"), getAllUsers);
+router.post("/", authorize("admin"), createUser);
 router.get("/by-interests", authorize("admin"), getUsersByInterests);
 router.get("/:id", getUserById);
 router.put("/:id", authorize("admin"), updateUser);

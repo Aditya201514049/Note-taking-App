@@ -1,11 +1,10 @@
 const User = require("../models/user.model");
+const getPagination = require("../utils/pagination");
 
 // Get all users (admin only - with pagination)
 const getAllUsers = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = getPagination(req.query);
 
     const users = await User.find()
       .select("-password")
@@ -27,6 +26,37 @@ const getAllUsers = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Create user (admin only)
+const createUser = async (req, res) => {
+  try {
+    const { username, email, password, role, interests } = req.body;
+    const user = await User.create({
+      username,
+      email,
+      password,
+      role: role || "user",
+      interests: interests || [],
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "User created successfully",
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        interests: user.interests,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
       success: false,
       message: error.message,
     });
@@ -167,6 +197,7 @@ const updateOwnProfile = async (req, res) => {
 // Uses exactly one collection.aggregate() call
 const getUsersByInterests = async (req, res) => {
   try {
+    const { page, limit, skip } = getPagination(req.query);
     const result = await User.aggregate([
       {
         $unwind: "$interests",
@@ -187,11 +218,26 @@ const getUsersByInterests = async (req, res) => {
       {
         $sort: { count: -1 },
       },
+      {
+        $facet: {
+          data: [{ $skip: skip }, { $limit: limit }],
+          total: [{ $count: "count" }],
+        },
+      },
     ]);
+
+    const data = result[0]?.data || [];
+    const total = result[0]?.total[0]?.count || 0;
 
     res.status(200).json({
       success: true,
-      data: result,
+      data,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
     });
   } catch (error) {
     res.status(500).json({
@@ -203,6 +249,7 @@ const getUsersByInterests = async (req, res) => {
 
 module.exports = {
   getAllUsers,
+  createUser,
   getUserById,
   updateUser,
   deleteUser,

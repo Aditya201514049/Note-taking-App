@@ -86,11 +86,7 @@ function App() {
           />
           <Route
             path="/posts"
-            element={
-              <ProtectedRoute>
-                <Posts />
-              </ProtectedRoute>
-            }
+            element={<Posts />}
           />
         </Routes>
       </Router>

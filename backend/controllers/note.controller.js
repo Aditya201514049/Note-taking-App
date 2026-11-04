@@ -1,4 +1,5 @@
 const Note = require("../models/note.model");
+const getPagination = require("../utils/pagination");
 
 // Create note
 const createNote = async (req, res) => {
@@ -27,9 +28,7 @@ const createNote = async (req, res) => {
 // Get user's notes (with pagination)
 const getUserNotes = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = getPagination(req.query);
 
     const notes = await Note.find({ userId: req.user._id })
       .sort({ createdAt: -1 })
@@ -59,9 +58,7 @@ const getUserNotes = async (req, res) => {
 // Get all notes (admin only - with pagination)
 const getAllNotes = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = getPagination(req.query);
 
     const notes = await Note.find()
       .populate('userId', 'username email') // Populate user details

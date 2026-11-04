@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
+const User = require("../models/user.model");
 const Post = require("../models/post.model");
+const getPagination = require("../utils/pagination");
 
 // Create post
 const createPost = async (req, res) => {
@@ -28,9 +30,7 @@ const createPost = async (req, res) => {
 // Get all posts (with pagination)
 const getAllPosts = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = getPagination(req.query);
 
     const posts = await Post.find()
       .populate('userId', 'username email') // Populate user details
@@ -62,38 +62,72 @@ const getAllPosts = async (req, res) => {
 const getPostsByUser = async (req, res) => {
   try {
     const userId = req.params.userId;
+    if (!mongoose.isValidObjectId(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID",
+      });
+    }
 
-    const result = await Post.aggregate([
+    const { page, limit, skip } = getPagination(req.query);
+
+    const result = await User.aggregate([
       {
-        $match: { userId: mongoose.Types.ObjectId(userId) },
+        $match: { _id: new mongoose.Types.ObjectId(userId) },
       },
       {
         $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "_id",
-          as: "user",
+          from: Post.collection.name,
+          localField: "_id",
+          foreignField: "userId",
+          pipeline: [
+            { $sort: { createdAt: -1 } },
+            {
+              $facet: {
+                data: [{ $skip: skip }, { $limit: limit }],
+                total: [{ $count: "count" }],
+              },
+            },
+            {
+              $project: {
+                data: 1,
+                total: { $ifNull: [{ $arrayElemAt: ["$total.count", 0] }, 0] },
+              },
+            },
+          ],
+          as: "postResults",
         },
       },
       {
-        $unwind: "$user",
-      },
-      {
         $project: {
-          title: 1,
-          content: 1,
-          createdAt: 1,
-          user: {
-            username: "$user.username",
-            email: "$user.email",
-          },
+          _id: 1,
+          username: 1,
+          posts: { $ifNull: [{ $arrayElemAt: ["$postResults.data", 0] }, []] },
+          total: { $ifNull: [{ $arrayElemAt: ["$postResults.total", 0] }, 0] },
         },
       },
     ]);
 
+    if (result.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
     res.status(200).json({
       success: true,
-      posts: result,
+      user: {
+        id: result[0]._id,
+        username: result[0].username,
+      },
+      posts: result[0].posts,
+      pagination: {
+        page,
+        limit,
+        total: result[0].total,
+        pages: Math.ceil(result[0].total / limit),
+      },
     });
   } catch (error) {
     res.status(500).json({

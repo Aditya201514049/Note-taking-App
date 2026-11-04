@@ -11,6 +11,14 @@ const Admin = () => {
   const [interestsGroup, setInterestsGroup] = useState([]);
   const [activeTab, setActiveTab] = useState("users");
   const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ page: 1, pages: 1 });
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [newUser, setNewUser] = useState({
+    username: "",
+    email: "",
+    password: "",
+    role: "user",
+  });
 
   useEffect(() => {
     if (user?.role !== "admin") {
@@ -22,6 +30,7 @@ const Admin = () => {
     try {
       const response = await api.get(`/users?page=${page}&limit=10`);
       setUsers(response.data.users);
+      setPagination(response.data.pagination);
     } catch (err) {
       console.error("Failed to fetch users", err);
     }
@@ -31,6 +40,7 @@ const Admin = () => {
     try {
       const response = await api.get(`/notes/all?page=${page}&limit=10`);
       setAllNotes(response.data.notes);
+      setPagination(response.data.pagination);
     } catch (err) {
       console.error("Failed to fetch notes", err);
     }
@@ -38,8 +48,9 @@ const Admin = () => {
 
   const fetchInterestsGroup = async () => {
     try {
-      const response = await api.get("/users/by-interests");
+      const response = await api.get(`/users/by-interests?page=${page}&limit=10`);
       setInterestsGroup(response.data.data);
+      setPagination(response.data.pagination);
     } catch (err) {
       console.error("Failed to fetch interests", err);
     }
@@ -57,7 +68,7 @@ const Admin = () => {
         await api.delete(`/users/${id}`);
         fetchUsers();
       } catch (err) {
-        alert("Failed to delete user");
+        alert(err.response?.data?.message || "Failed to delete user");
       }
     }
   };
@@ -67,7 +78,19 @@ const Admin = () => {
       await api.put(`/users/${id}`, userData);
       fetchUsers();
     } catch (err) {
-      alert("Failed to update user");
+      alert(err.response?.data?.message || "Failed to update user");
+    }
+  };
+
+  const handleCreateUser = async (event) => {
+    event.preventDefault();
+    try {
+      await api.post("/users", newUser);
+      setNewUser({ username: "", email: "", password: "", role: "user" });
+      setShowAddUser(false);
+      fetchUsers();
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to create user");
     }
   };
 
@@ -83,19 +106,28 @@ const Admin = () => {
       <div className="tabs">
         <button
           className={`tab-button ${activeTab === "users" ? "active" : ""}`}
-          onClick={() => setActiveTab("users")}
+          onClick={() => {
+            setPage(1);
+            setActiveTab("users");
+          }}
         >
           Users
         </button>
         <button
           className={`tab-button ${activeTab === "notes" ? "active" : ""}`}
-          onClick={() => setActiveTab("notes")}
+          onClick={() => {
+            setPage(1);
+            setActiveTab("notes");
+          }}
         >
           All Notes
         </button>
         <button
           className={`tab-button ${activeTab === "interests" ? "active" : ""}`}
-          onClick={() => setActiveTab("interests")}
+          onClick={() => {
+            setPage(1);
+            setActiveTab("interests");
+          }}
         >
           Users by Interests
         </button>
@@ -103,7 +135,71 @@ const Admin = () => {
 
       {activeTab === "users" && (
         <div>
-          <h3 style={{ marginBottom: "20px", color: "#1a1a2e" }}>All Users</h3>
+          <div className="navbar">
+            <h3 style={{ marginBottom: "20px", color: "#1a1a2e" }}>All Users</h3>
+            <button
+              className="btn-primary"
+              onClick={() => setShowAddUser((visible) => !visible)}
+            >
+              {showAddUser ? "Cancel" : "Add User"}
+            </button>
+          </div>
+          {showAddUser && (
+            <form className="card" onSubmit={handleCreateUser}>
+              <div className="form-group">
+                <label htmlFor="new-username">Username:</label>
+                <input
+                  id="new-username"
+                  value={newUser.username}
+                  onChange={(event) =>
+                    setNewUser({ ...newUser, username: event.target.value })
+                  }
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="new-email">Email:</label>
+                <input
+                  id="new-email"
+                  type="email"
+                  value={newUser.email}
+                  onChange={(event) =>
+                    setNewUser({ ...newUser, email: event.target.value })
+                  }
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="new-password">Password:</label>
+                <input
+                  id="new-password"
+                  type="password"
+                  minLength="6"
+                  value={newUser.password}
+                  onChange={(event) =>
+                    setNewUser({ ...newUser, password: event.target.value })
+                  }
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="new-role">Role:</label>
+                <select
+                  id="new-role"
+                  value={newUser.role}
+                  onChange={(event) =>
+                    setNewUser({ ...newUser, role: event.target.value })
+                  }
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              <button type="submit" className="btn-primary">
+                Create User
+              </button>
+            </form>
+          )}
           {users.length === 0 ? (
             <div className="empty-state">
               <p>No users found</p>
@@ -148,6 +244,23 @@ const Admin = () => {
               </tbody>
             </table>
           )}
+          <div className="pagination-controls">
+            <button
+              className="btn-secondary"
+              onClick={() => setPage((current) => current - 1)}
+              disabled={page <= 1}
+            >
+              Previous
+            </button>
+            <span>Page {page} of {pagination.pages}</span>
+            <button
+              className="btn-secondary"
+              onClick={() => setPage((current) => current + 1)}
+              disabled={page >= pagination.pages}
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
 
@@ -170,6 +283,23 @@ const Admin = () => {
               </div>
             ))
           )}
+          <div className="pagination-controls">
+            <button
+              className="btn-secondary"
+              onClick={() => setPage((current) => current - 1)}
+              disabled={page <= 1}
+            >
+              Previous
+            </button>
+            <span>Page {page} of {pagination.pages}</span>
+            <button
+              className="btn-secondary"
+              onClick={() => setPage((current) => current + 1)}
+              disabled={page >= pagination.pages}
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
 
@@ -196,6 +326,23 @@ const Admin = () => {
               </div>
             ))
           )}
+          <div className="pagination-controls">
+            <button
+              className="btn-secondary"
+              onClick={() => setPage((current) => current - 1)}
+              disabled={page <= 1}
+            >
+              Previous
+            </button>
+            <span>Page {page} of {pagination.pages}</span>
+            <button
+              className="btn-secondary"
+              onClick={() => setPage((current) => current + 1)}
+              disabled={page >= pagination.pages}
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
     </div>

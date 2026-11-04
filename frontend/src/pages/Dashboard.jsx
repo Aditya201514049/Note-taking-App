@@ -7,6 +7,7 @@ const Dashboard = () => {
   const { user, logout, refreshUser } = useAuth();
   const navigate = useNavigate();
   const [notes, setNotes] = useState([]);
+  const [pagination, setPagination] = useState({ page: 1, pages: 1 });
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ title: "", content: "" });
   const [editingNote, setEditingNote] = useState(null);
@@ -19,6 +20,7 @@ const Dashboard = () => {
     try {
       const response = await api.get(`/notes/my-notes?page=${page}&limit=10`);
       setNotes(response.data.notes);
+      setPagination(response.data.pagination);
     } catch (err) {
       console.error("Failed to fetch notes", err);
     }
@@ -39,7 +41,7 @@ const Dashboard = () => {
       setShowForm(false);
       fetchNotes();
     } catch (err) {
-      alert("Failed to create note");
+      alert(err.response?.data?.message || "Failed to create note");
     }
   };
 
@@ -51,7 +53,7 @@ const Dashboard = () => {
       setEditingNote(null);
       fetchNotes();
     } catch (err) {
-      alert("Failed to update note");
+      alert(err.response?.data?.message || "Failed to update note");
     }
   };
 
@@ -61,7 +63,7 @@ const Dashboard = () => {
         await api.delete(`/notes/${id}`);
         fetchNotes();
       } catch (err) {
-        alert("Failed to delete note");
+        alert(err.response?.data?.message || "Failed to delete note");
       }
     }
   };
@@ -256,6 +258,23 @@ const Dashboard = () => {
             </div>
           ))
         )}
+        <div className="pagination-controls">
+          <button
+            className="btn-secondary"
+            onClick={() => setPage((current) => current - 1)}
+            disabled={page <= 1}
+          >
+            Previous
+          </button>
+          <span>Page {page} of {pagination.pages}</span>
+          <button
+            className="btn-secondary"
+            onClick={() => setPage((current) => current + 1)}
+            disabled={page >= pagination.pages}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

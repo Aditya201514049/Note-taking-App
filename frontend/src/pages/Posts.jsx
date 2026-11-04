@@ -7,6 +7,7 @@ const Posts = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
+  const [pagination, setPagination] = useState({ page: 1, pages: 1 });
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ title: "", content: "" });
   const [page, setPage] = useState(1);
@@ -15,6 +16,7 @@ const Posts = () => {
     try {
       const response = await api.get(`/posts?page=${page}&limit=10`);
       setPosts(response.data.posts);
+      setPagination(response.data.pagination);
     } catch (err) {
       console.error("Failed to fetch posts", err);
     }
@@ -32,7 +34,7 @@ const Posts = () => {
       setShowForm(false);
       fetchPosts();
     } catch (err) {
-      alert("Failed to create post");
+      alert(err.response?.data?.message || "Failed to create post");
     }
   };
 
@@ -45,14 +47,16 @@ const Posts = () => {
         </button>
       </div>
 
-      <button
-        onClick={() => setShowForm(!showForm)}
-        className={showForm ? "btn-secondary" : "btn-success"}
-      >
-        {showForm ? "Cancel" : "Create Post"}
-      </button>
+      {user && (
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className={showForm ? "btn-secondary" : "btn-success"}
+        >
+          {showForm ? "Cancel" : "Create Post"}
+        </button>
+      )}
 
-      {showForm && (
+      {user && showForm && (
         <div className="card" style={{ marginTop: "20px" }}>
           <h3 style={{ marginBottom: "20px", color: "#1a1a2e" }}>Create Post</h3>
           <form onSubmit={handleCreate}>
@@ -105,6 +109,23 @@ const Posts = () => {
             </div>
           ))
         )}
+        <div className="pagination-controls">
+          <button
+            className="btn-secondary"
+            onClick={() => setPage((current) => current - 1)}
+            disabled={page <= 1}
+          >
+            Previous
+          </button>
+          <span>Page {page} of {pagination.pages}</span>
+          <button
+            className="btn-secondary"
+            onClick={() => setPage((current) => current + 1)}
+            disabled={page >= pagination.pages}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );
