@@ -164,7 +164,7 @@ const Admin = () => {
                 <h4>{note.title}</h4>
                 <p>{note.content}</p>
                 <small>
-                  User ID: {note.userId} | Created:{" "}
+                  By: {note.userId?.username || note.userId} ({note.userId?.email || ""}) | Created:{" "}
                   {new Date(note.createdAt).toLocaleString()}
                 </small>
               </div>

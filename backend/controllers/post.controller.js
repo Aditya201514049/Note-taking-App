@@ -33,6 +33,7 @@ const getAllPosts = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const posts = await Post.find()
+      .populate('userId', 'username email') // Populate user details
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);

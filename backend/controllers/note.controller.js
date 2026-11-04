@@ -64,6 +64,7 @@ const getAllNotes = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const notes = await Note.find()
+      .populate('userId', 'username email') // Populate user details
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);

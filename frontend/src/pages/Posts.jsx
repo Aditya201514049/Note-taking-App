@@ -99,7 +99,7 @@ const Posts = () => {
               <h4>{post.title}</h4>
               <p>{post.content}</p>
               <small>
-                User ID: {post.userId} | Created:{" "}
+                By: {post.userId?.username || post.userId} ({post.userId?.email || ""}) | Created:{" "}
                 {new Date(post.createdAt).toLocaleString()}
               </small>
             </div>
