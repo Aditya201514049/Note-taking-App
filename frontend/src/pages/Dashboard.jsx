@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, refreshUser } = useAuth();
   const navigate = useNavigate();
   const [notes, setNotes] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -79,12 +79,20 @@ const Dashboard = () => {
   const handleSaveInterests = async () => {
     try {
       const response = await api.put("/users/profile", { interests: selectedInterests });
-      alert("Interests saved successfully!");
-      setUser(response.data.user);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-      setShowInterests(false);
+      if (response.data.success) {
+        alert("Interests saved successfully!");
+        setShowInterests(false);
+        // Update localStorage with new user data
+        if (response.data.user) {
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+          refreshUser(); // Refresh user state from AuthContext
+        }
+      } else {
+        alert("Failed to save interests");
+      }
     } catch (err) {
-      alert("Failed to save interests");
+      console.error("Error saving interests:", err);
+      alert("Failed to save interests: " + (err.response?.data?.message || err.message));
     }
   };
 

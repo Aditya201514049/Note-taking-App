@@ -6,14 +6,17 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token"));
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Load user from localStorage on mount
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
-    if (savedUser) {
+    const savedToken = localStorage.getItem("token");
+    if (savedUser && savedToken) {
       setUser(JSON.parse(savedUser));
+      setToken(savedToken);
     }
+    setLoading(false);
   }, []);
 
   const login = async (email, password) => {
@@ -53,9 +56,16 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const refreshUser = () => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, token, login, register, logout, loading }}
+      value={{ user, token, login, register, logout, loading, refreshUser }}
     >
       {children}
     </AuthContext.Provider>
