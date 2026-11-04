@@ -72,57 +72,30 @@ const Admin = () => {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "900px", margin: "0 auto" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "20px",
-        }}
-      >
-        <h2>Admin Panel</h2>
-        <button onClick={() => navigate("/dashboard")} style={{ padding: "8px" }}>
+    <div style={{ padding: "40px 20px", maxWidth: "1000px", margin: "0 auto" }}>
+      <div className="navbar">
+        <h1>Admin Panel</h1>
+        <button className="btn-secondary" onClick={() => navigate("/dashboard")}>
           Back to Dashboard
         </button>
       </div>
 
-      <div style={{ marginBottom: "20px" }}>
+      <div className="tabs">
         <button
+          className={`tab-button ${activeTab === "users" ? "active" : ""}`}
           onClick={() => setActiveTab("users")}
-          style={{
-            padding: "10px 20px",
-            marginRight: "10px",
-            backgroundColor: activeTab === "users" ? "#007bff" : "#6c757d",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-          }}
         >
           Users
         </button>
         <button
+          className={`tab-button ${activeTab === "notes" ? "active" : ""}`}
           onClick={() => setActiveTab("notes")}
-          style={{
-            padding: "10px 20px",
-            marginRight: "10px",
-            backgroundColor: activeTab === "notes" ? "#007bff" : "#6c757d",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-          }}
         >
           All Notes
         </button>
         <button
+          className={`tab-button ${activeTab === "interests" ? "active" : ""}`}
           onClick={() => setActiveTab("interests")}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: activeTab === "interests" ? "#007bff" : "#6c757d",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-          }}
         >
           Users by Interests
         </button>
@@ -130,37 +103,42 @@ const Admin = () => {
 
       {activeTab === "users" && (
         <div>
-          <h3>All Users</h3>
+          <h3 style={{ marginBottom: "20px", color: "#667eea" }}>All Users</h3>
           {users.length === 0 ? (
-            <p>No users found</p>
+            <div className="empty-state">
+              <p>No users found</p>
+            </div>
           ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <table>
               <thead>
-                <tr style={{ borderBottom: "2px solid #ddd" }}>
-                  <th style={{ padding: "10px", textAlign: "left" }}>Username</th>
-                  <th style={{ padding: "10px", textAlign: "left" }}>Email</th>
-                  <th style={{ padding: "10px", textAlign: "left" }}>Role</th>
-                  <th style={{ padding: "10px", textAlign: "left" }}>Actions</th>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((u) => (
-                  <tr key={u._id} style={{ borderBottom: "1px solid #ddd" }}>
-                    <td style={{ padding: "10px" }}>{u.username}</td>
-                    <td style={{ padding: "10px" }}>{u.email}</td>
-                    <td style={{ padding: "10px" }}>{u.role}</td>
-                    <td style={{ padding: "10px" }}>
+                  <tr key={u._id}>
+                    <td>{u.username}</td>
+                    <td>{u.email}</td>
+                    <td>
+                      <span className={`user-badge ${u.role}`}>{u.role}</span>
+                    </td>
+                    <td>
                       <button
+                        className="btn-primary btn-small"
                         onClick={() =>
                           handleUpdateUser(u._id, { role: u.role === "user" ? "admin" : "user" })
                         }
-                        style={{ marginRight: "5px", padding: "5px 10px" }}
                       >
                         Toggle Role
                       </button>
                       <button
+                        className="btn-danger btn-small"
                         onClick={() => handleDeleteUser(u._id)}
-                        style={{ padding: "5px 10px", backgroundColor: "#dc3545", color: "white", border: "none", cursor: "pointer" }}
+                        style={{ marginLeft: "8px" }}
                       >
                         Delete
                       </button>
@@ -175,20 +153,14 @@ const Admin = () => {
 
       {activeTab === "notes" && (
         <div>
-          <h3>All Notes (All Users)</h3>
+          <h3 style={{ marginBottom: "20px", color: "#667eea" }}>All Notes (All Users)</h3>
           {allNotes.length === 0 ? (
-            <p>No notes found</p>
+            <div className="empty-state">
+              <p>No notes found</p>
+            </div>
           ) : (
             allNotes.map((note) => (
-              <div
-                key={note._id}
-                style={{
-                  border: "1px solid #ddd",
-                  padding: "15px",
-                  marginBottom: "10px",
-                  borderRadius: "5px",
-                }}
-              >
+              <div key={note._id} className="note-card">
                 <h4>{note.title}</h4>
                 <p>{note.content}</p>
                 <small>
@@ -203,24 +175,20 @@ const Admin = () => {
 
       {activeTab === "interests" && (
         <div>
-          <h3>Users Grouped by Interests (Aggregation)</h3>
+          <h3 style={{ marginBottom: "20px", color: "#667eea" }}>
+            Users Grouped by Interests (Aggregation)
+          </h3>
           {interestsGroup.length === 0 ? (
-            <p>No interests data found</p>
+            <div className="empty-state">
+              <p>No interests data found</p>
+            </div>
           ) : (
             interestsGroup.map((group) => (
-              <div
-                key={group._id}
-                style={{
-                  border: "1px solid #ddd",
-                  padding: "15px",
-                  marginBottom: "10px",
-                  borderRadius: "5px",
-                }}
-              >
+              <div key={group._id} className="interest-group">
                 <h4>{group._id} ({group.count} users)</h4>
-                <ul>
+                <ul style={{ marginTop: "12px", paddingLeft: "20px" }}>
                   {group.users.map((u) => (
-                    <li key={u.id}>
+                    <li key={u.id} style={{ marginBottom: "8px" }}>
                       {u.username} ({u.email})
                     </li>
                   ))}

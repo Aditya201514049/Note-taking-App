@@ -71,35 +71,21 @@ const Dashboard = () => {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "20px",
-        }}
-      >
-        <h2>Dashboard</h2>
-        <div>
-          <span style={{ marginRight: "15px" }}>
-            Welcome, {user?.username} ({user?.role})
-          </span>
+    <div style={{ padding: "40px 20px", maxWidth: "900px", margin: "0 auto" }}>
+      <div className="navbar">
+        <h1>My Notes</h1>
+        <div className="user-info">
+          <span>Welcome, {user?.username}</span>
+          <span className={`user-badge ${user?.role}`}>{user?.role}</span>
           {user?.role === "admin" && (
-            <button
-              onClick={() => navigate("/admin")}
-              style={{ marginRight: "10px", padding: "8px" }}
-            >
+            <button className="btn-primary btn-small" onClick={() => navigate("/admin")}>
               Admin Panel
             </button>
           )}
-          <button
-            onClick={() => navigate("/posts")}
-            style={{ marginRight: "10px", padding: "8px" }}
-          >
+          <button className="btn-secondary btn-small" onClick={() => navigate("/posts")}>
             Posts
           </button>
-          <button onClick={handleLogout} style={{ padding: "8px" }}>
+          <button className="btn-danger btn-small" onClick={handleLogout}>
             Logout
           </button>
         </div>
@@ -107,108 +93,84 @@ const Dashboard = () => {
 
       <button
         onClick={() => setShowForm(!showForm)}
-        style={{
-          padding: "10px 20px",
-          backgroundColor: "#28a745",
-          color: "white",
-          border: "none",
-          cursor: "pointer",
-          marginBottom: "20px",
-        }}
+        className={showForm ? "btn-secondary" : "btn-success"}
       >
         {showForm ? "Cancel" : "Create Note"}
       </button>
 
       {(showForm || editingNote) && (
-        <form
-          onSubmit={editingNote ? handleUpdate : handleCreate}
-          style={{
-            border: "1px solid #ddd",
-            padding: "20px",
-            marginBottom: "20px",
-            borderRadius: "5px",
-          }}
-        >
-          <h3>{editingNote ? "Edit Note" : "Create Note"}</h3>
-          <div style={{ marginBottom: "15px" }}>
-            <label>Title:</label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
-              required
-              style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-            />
-          </div>
-          <div style={{ marginBottom: "15px" }}>
-            <label>Content:</label>
-            <textarea
-              value={formData.content}
-              onChange={(e) =>
-                setFormData({ ...formData, content: e.target.value })
-              }
-              required
-              style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-              rows="4"
-            />
-          </div>
-          <button
-            type="submit"
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "#007bff",
-              color: "white",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            {editingNote ? "Update" : "Create"}
-          </button>
-          {editingNote && (
-            <button
-              type="button"
-              onClick={() => {
-                setEditingNote(null);
-                setFormData({ title: "", content: "" });
-              }}
-              style={{ marginLeft: "10px", padding: "10px 20px" }}
-            >
-              Cancel
+        <div className="card" style={{ marginTop: "20px" }}>
+          <h3 style={{ marginBottom: "20px", color: "#667eea" }}>
+            {editingNote ? "Edit Note" : "Create Note"}
+          </h3>
+          <form onSubmit={editingNote ? handleUpdate : handleCreate}>
+            <div className="form-group">
+              <label>Title:</label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+                required
+                placeholder="Enter note title"
+              />
+            </div>
+            <div className="form-group">
+              <label>Content:</label>
+              <textarea
+                value={formData.content}
+                onChange={(e) =>
+                  setFormData({ ...formData, content: e.target.value })
+                }
+                required
+                rows="5"
+                placeholder="Enter note content"
+              />
+            </div>
+            <button type="submit" className="btn-primary">
+              {editingNote ? "Update" : "Create"}
             </button>
-          )}
-        </form>
+            {editingNote && (
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => {
+                  setEditingNote(null);
+                  setFormData({ title: "", content: "" });
+                }}
+                style={{ marginLeft: "10px" }}
+              >
+                Cancel
+              </button>
+            )}
+          </form>
+        </div>
       )}
 
-      <div>
-        <h3>My Notes</h3>
+      <div style={{ marginTop: "30px" }}>
+        <h3 style={{ marginBottom: "20px", color: "#667eea" }}>My Notes</h3>
         {notes.length === 0 ? (
-          <p>No notes yet</p>
+          <div className="empty-state">
+            <p>No notes yet. Create your first note!</p>
+          </div>
         ) : (
           notes.map((note) => (
-            <div
-              key={note._id}
-              style={{
-                border: "1px solid #ddd",
-                padding: "15px",
-                marginBottom: "10px",
-                borderRadius: "5px",
-              }}
-            >
+            <div key={note._id} className="note-card">
               <h4>{note.title}</h4>
               <p>{note.content}</p>
               <small>{new Date(note.createdAt).toLocaleString()}</small>
-              <div style={{ marginTop: "10px" }}>
+              <div style={{ marginTop: "12px" }}>
                 <button
+                  className="btn-primary btn-small"
                   onClick={() => startEdit(note)}
-                  style={{ marginRight: "10px", padding: "5px 10px" }}
                 >
                   Edit
                 </button>
                 <button
+                  className="btn-danger btn-small"
                   onClick={() => handleDelete(note._id)}
-                  style={{ padding: "5px 10px", backgroundColor: "#dc3545", color: "white", border: "none", cursor: "pointer" }}
+                  style={{ marginLeft: "8px" }}
                 >
                   Delete
                 </button>

@@ -37,100 +37,65 @@ const Posts = () => {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "20px",
-        }}
-      >
-        <h2>Posts</h2>
-        <button onClick={() => navigate("/dashboard")} style={{ padding: "8px" }}>
+    <div style={{ padding: "40px 20px", maxWidth: "900px", margin: "0 auto" }}>
+      <div className="navbar">
+        <h1>Posts</h1>
+        <button className="btn-secondary" onClick={() => navigate("/dashboard")}>
           Back to Dashboard
         </button>
       </div>
 
       <button
         onClick={() => setShowForm(!showForm)}
-        style={{
-          padding: "10px 20px",
-          backgroundColor: "#28a745",
-          color: "white",
-          border: "none",
-          cursor: "pointer",
-          marginBottom: "20px",
-        }}
+        className={showForm ? "btn-secondary" : "btn-success"}
       >
         {showForm ? "Cancel" : "Create Post"}
       </button>
 
       {showForm && (
-        <form
-          onSubmit={handleCreate}
-          style={{
-            border: "1px solid #ddd",
-            padding: "20px",
-            marginBottom: "20px",
-            borderRadius: "5px",
-          }}
-        >
-          <h3>Create Post</h3>
-          <div style={{ marginBottom: "15px" }}>
-            <label>Title:</label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
-              required
-              style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-            />
-          </div>
-          <div style={{ marginBottom: "15px" }}>
-            <label>Content:</label>
-            <textarea
-              value={formData.content}
-              onChange={(e) =>
-                setFormData({ ...formData, content: e.target.value })
-              }
-              required
-              style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-              rows="4"
-            />
-          </div>
-          <button
-            type="submit"
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "#007bff",
-              color: "white",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            Create
-          </button>
-        </form>
+        <div className="card" style={{ marginTop: "20px" }}>
+          <h3 style={{ marginBottom: "20px", color: "#667eea" }}>Create Post</h3>
+          <form onSubmit={handleCreate}>
+            <div className="form-group">
+              <label>Title:</label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+                required
+                placeholder="Enter post title"
+              />
+            </div>
+            <div className="form-group">
+              <label>Content:</label>
+              <textarea
+                value={formData.content}
+                onChange={(e) =>
+                  setFormData({ ...formData, content: e.target.value })
+                }
+                required
+                rows="5"
+                placeholder="Enter post content"
+              />
+            </div>
+            <button type="submit" className="btn-primary">
+              Create
+            </button>
+          </form>
+        </div>
       )}
 
-      <div>
-        <h3>All Posts</h3>
+      <div style={{ marginTop: "30px" }}>
+        <h3 style={{ marginBottom: "20px", color: "#667eea" }}>All Posts</h3>
         {posts.length === 0 ? (
-          <p>No posts yet</p>
+          <div className="empty-state">
+            <p>No posts yet. Create your first post!</p>
+          </div>
         ) : (
           posts.map((post) => (
-            <div
-              key={post._id}
-              style={{
-                border: "1px solid #ddd",
-                padding: "15px",
-                marginBottom: "10px",
-                borderRadius: "5px",
-              }}
-            >
+            <div key={post._id} className="post-card">
               <h4>{post.title}</h4>
               <p>{post.content}</p>
               <small>

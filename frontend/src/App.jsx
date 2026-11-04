@@ -8,14 +8,36 @@ import Posts from "./pages/Posts";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <div style={{ 
+      display: "flex", 
+      justifyContent: "center", 
+      alignItems: "center", 
+      minHeight: "100vh",
+      color: "#667eea",
+      fontSize: "18px"
+    }}>
+      Loading...
+    </div>
+  );
   if (!user) return <Navigate to="/login" />;
   return children;
 };
 
 const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <div style={{ 
+      display: "flex", 
+      justifyContent: "center", 
+      alignItems: "center", 
+      minHeight: "100vh",
+      color: "#667eea",
+      fontSize: "18px"
+    }}>
+      Loading...
+    </div>
+  );
   if (!user || user.role !== "admin") return <Navigate to="/dashboard" />;
   return children;
 };

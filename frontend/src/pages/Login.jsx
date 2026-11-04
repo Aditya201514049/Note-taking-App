@@ -20,46 +20,38 @@ const Login = () => {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "50px auto", padding: "20px" }}>
-      <h2>Login</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className="form-container" style={{ maxWidth: "400px", margin: "80px auto" }}>
+      <h2 style={{ textAlign: "center", marginBottom: "24px", color: "#667eea" }}>Welcome Back</h2>
+      {error && <div className="error-message">{error}</div>}
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "15px" }}>
+        <div className="form-group">
           <label>Email:</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+            style={{ width: "100%" }}
+            placeholder="Enter your email"
           />
         </div>
-        <div style={{ marginBottom: "15px" }}>
+        <div className="form-group">
           <label>Password:</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+            style={{ width: "100%" }}
+            placeholder="Enter your password"
           />
         </div>
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "10px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
+        <button type="submit" className="btn-primary" style={{ width: "100%" }}>
           Login
         </button>
       </form>
-      <p style={{ marginTop: "15px" }}>
-        Don't have an account? <Link to="/register">Register</Link>
+      <p style={{ marginTop: "20px", textAlign: "center", color: "#666" }}>
+        Don't have an account? <Link to="/register">Register here</Link>
       </p>
     </div>
   );
