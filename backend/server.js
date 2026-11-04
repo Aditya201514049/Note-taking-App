@@ -20,6 +20,12 @@ app.get("/", (req, res) => {
   });
 });
 
+// Routes
+app.use("/api/auth", require("./routes/auth.routes"));
+app.use("/api/notes", require("./routes/note.routes"));
+app.use("/api/users", require("./routes/user.routes"));
+app.use("/api/posts", require("./routes/post.routes"));
+
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
